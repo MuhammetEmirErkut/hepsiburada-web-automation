@@ -1,0 +1,17 @@
+[
+  {
+    "key": "defaultUserEmail",
+    "value": "emirtest.erkut@gmail.com",
+    "type": "string"
+  },
+  {
+    "key": "defaultUserPassword",
+    "value": "Emir.1234!",
+    "type": "string"
+  },
+  {
+    "key": "searchKeyword",
+    "value": "bilgisayar",
+    "type": "string"
+  }
+]

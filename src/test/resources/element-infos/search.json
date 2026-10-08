@@ -1,0 +1,12 @@
+[
+  {
+    "key": "productCards",
+    "value": "//li[contains(@id,'i') and contains(@class,'productListContent')] | //li[contains(@class,'search-item')] | //div[@data-test-id='product-card-item']",
+    "type": "xpath"
+  },
+  {
+    "key": "productTitleInCard",
+    "value": ".//h3 | .//span[@data-test-id='product-card-name'] | .//h2",
+    "type": "xpath"
+  }
+]

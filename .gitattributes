@@ -1,0 +1,4 @@
+* text=auto eol=lf
+*.spec text
+*.cpt text
+*.json text

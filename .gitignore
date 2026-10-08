@@ -1,0 +1,103 @@
+# ==========================================
+# Local & Temporary Documentation / Notes
+# ==========================================
+*local*.md
+*LOCAL*.md
+*.local.md
+local_*.md
+*.tmp.md
+notes*.md
+scratch*.md
+TODO_local*
+
+# ==========================================
+# Gauge Framework & Test Execution Artifacts
+# ==========================================
+.gauge/
+logs/
+gauge_bin/
+reports/
+test-output/
+allure-results/
+allure-report/
+extent-reports/
+screenshots/
+*.log
+
+# ==========================================
+# Maven / Java Build Outputs
+# ==========================================
+target/
+build/
+dist/
+nbdist/
+.kotlin
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# ==========================================
+# Environment & Local Secrets / Configs
+# ==========================================
+.env
+.env.*
+!.env.example
+*.local.properties
+env/local/
+*.credentials
+
+# ==========================================
+# JVM Crash Logs & Temp Files
+# ==========================================
+hs_err_pid*
+replay_pid*
+*.tmp
+*.temp
+*.swp
+*~
+
+# ==========================================
+# IntelliJ IDEA
+# ==========================================
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# ==========================================
+# VS Code
+# ==========================================
+.vscode/
+*.code-workspace
+
+# ==========================================
+# Eclipse
+# ==========================================
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache
+
+# ==========================================
+# NetBeans
+# ==========================================
+/nbproject/private/
+/nbbuild/
+/.nb-gradle/
+
+# ==========================================
+# Operating System Files
+# ==========================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db

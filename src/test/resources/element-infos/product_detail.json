@@ -1,0 +1,27 @@
+[
+  {
+    "key": "addToCartButton",
+    "value": "//button[@id='addToCart'] | //button[contains(@data-test-id,'addToCart')] | //button[contains(.,'Sepete Ekle')] | //div[@id='addToCart']//button | //button[contains(@class,'add-to-basket')] | //button[contains(@class,'AddToCart')] | //div[contains(@class,'AddToCart')]//button",
+    "type": "xpath"
+  },
+  {
+    "key": "cartAddedToastModal",
+    "value": "//span[contains(text(),'Ürün sepete eklendi') or contains(text(),'Sepetinizde') or contains(text(),'Sepete Eklendi')] | //div[contains(@class,'checkoutui-Modal')] | //button[contains(text(),'Sepete git') or contains(text(),'Sepetim')] | //div[contains(@class,'toast')]",
+    "type": "xpath"
+  },
+  {
+    "key": "goToCartButtonInModal",
+    "value": "//button[contains(text(),'Sepete git') or contains(text(),'Sepetim')] | //a[contains(@href,'/sepetim')] | //a[contains(@href,'/basket')] | //button[contains(@class,'checkoutui')]",
+    "type": "xpath"
+  },
+  {
+    "key": "headerCartIcon",
+    "value": "//span[@id='shoppingCart'] | //a[@id='shoppingCart'] | //a[contains(@href,'/sepetim')] | //div[contains(@class,'cart')]",
+    "type": "xpath"
+  },
+  {
+    "key": "productDetailTitle",
+    "value": "//h1[@id='product-name'] | //h1[contains(@class,'product-name')] | //h1",
+    "type": "xpath"
+  }
+]

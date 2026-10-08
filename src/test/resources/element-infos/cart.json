@@ -1,0 +1,12 @@
+[
+  {
+    "key": "cartItemTitles",
+    "value": "//div[contains(@class,'product_name')]//a | //a[contains(@class,'item-title')] | //div[contains(@class,'merchant')]//a",
+    "type": "xpath"
+  },
+  {
+    "key": "cartContainer",
+    "value": "//div[contains(@class,'cart-container')] | //section[contains(@class,'cart')]",
+    "type": "xpath"
+  }
+]

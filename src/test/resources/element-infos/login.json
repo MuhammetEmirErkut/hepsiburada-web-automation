@@ -1,0 +1,27 @@
+[
+  {
+    "key": "usernameInput",
+    "value": "//input[@id='txtUserName' or @name='username' or @type='email']",
+    "type": "xpath"
+  },
+  {
+    "key": "loginSubmitButton",
+    "value": "//button[@id='btnLogin' or @name='btnLogin' or @type='submit' or contains(text(), 'Giriş')]",
+    "type": "xpath"
+  },
+  {
+    "key": "passwordInput",
+    "value": "//input[@id='txtPassword' or @name='password' or @type='password']",
+    "type": "xpath"
+  },
+  {
+    "key": "emailLoginSubmitButton",
+    "value": "//button[@id='btnEmailSelect' or @id='btnPasswordSelect' or @id='btnLogin' or @type='submit' or contains(., 'Giriş')]",
+    "type": "xpath"
+  },
+  {
+    "key": "loginErrorMessage",
+    "value": "//div[contains(@class,'error')] | //div[contains(@class,'alert')] | //span[contains(@class,'error')] | //div[contains(@data-test-id,'error')]",
+    "type": "xpath"
+  }
+]

@@ -1,0 +1,70 @@
+# Browser and Driver Configuration
+browser: "chrome"
+
+remoteDebug:
+  enabled: false
+  host: "127.0.0.1"
+  port: 9222
+
+timeouts:
+  explicitWait: 15
+  pageLoadTimeout: 60
+  shortWait: 3
+
+chrome:
+  headless: false
+  userDataDir: ""
+  args:
+    - "--start-maximized"
+    - "--disable-notifications"
+    - "--disable-blink-features=AutomationControlled"
+    - "--remote-allow-origins=*"
+    - "--lang=tr-TR"
+  prefs:
+    profile.default_content_setting_values.notifications: 2
+    credentials_enable_service: false
+    profile.password_manager_enabled: false
+  excludeSwitches:
+    - "enable-automation"
+  useAutomationExtension: false
+  stealth:
+    enabled: true
+    script: |
+      Object.defineProperty(navigator, 'webdriver', {get: () => undefined});
+      Object.defineProperty(navigator, 'languages', {get: () => ['tr-TR', 'tr', 'en-US', 'en']});
+      Object.defineProperty(navigator, 'hardwareConcurrency', {get: () => 8});
+      Object.defineProperty(navigator, 'deviceMemory', {get: () => 8});
+      Object.defineProperty(navigator, 'maxTouchPoints', {get: () => 0});
+      Object.defineProperty(navigator, 'plugins', {get: () => [
+          { name: 'Chrome PDF Plugin', filename: 'internal-pdf-viewer', description: 'Portable Document Format' },
+          { name: 'Chrome PDF Viewer', filename: 'mhjfbmdgcfjbbpaeojofohoefgiehjai', description: '' },
+          { name: 'Native Client', filename: 'internal-nacl-plugin', description: '' }
+      ]});
+      window.chrome = { runtime: {}, app: {} };
+      const getParameter = WebGLRenderingContext.prototype.getParameter;
+      WebGLRenderingContext.prototype.getParameter = function(parameter) {
+          if (parameter === 37445) { return 'Apple Inc.'; }
+          if (parameter === 37446) { return 'Apple M1'; }
+          return getParameter.apply(this, arguments);
+      };
+      if (typeof WebGL2RenderingContext !== 'undefined') {
+          const getParameter2 = WebGL2RenderingContext.prototype.getParameter;
+          WebGL2RenderingContext.prototype.getParameter = function(parameter) {
+              if (parameter === 37445) { return 'Apple Inc.'; }
+              if (parameter === 37446) { return 'Apple M1'; }
+              return getParameter2.apply(this, arguments);
+          };
+      }
+      const originalQuery = window.navigator.permissions.query;
+      window.navigator.permissions.query = (parameters) => (
+          parameters.name === 'notifications' ?
+              Promise.resolve({ state: Notification.permission }) :
+              originalQuery(parameters)
+      );
+
+firefox:
+  headless: false
+  args:
+    - "-start-maximized"
+  prefs:
+    dom.webnotifications.enabled: false

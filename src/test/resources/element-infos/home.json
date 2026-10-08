@@ -1,0 +1,32 @@
+[
+  {
+    "key": "cookieAcceptButton",
+    "value": "onetrust-accept-btn-handler",
+    "type": "id"
+  },
+  {
+    "key": "myAccountDropdown",
+    "value": "myAccount",
+    "type": "id"
+  },
+  {
+    "key": "loginButton",
+    "value": "login",
+    "type": "id"
+  },
+  {
+    "key": "searchBoxContainer",
+    "value": "//div[contains(@class,'searchBoxOld')] | //div[contains(@class,'searchBar')] | //div[contains(@class,'SearchBox')] | //input[@placeholder='Ürün, kategori veya marka ara']",
+    "type": "xpath"
+  },
+  {
+    "key": "searchBoxInput",
+    "value": "//input[contains(@class,'theme-input')] | //input[@placeholder='Ürün, kategori veya marka ara'] | //div[contains(@class,'searchBoxOld')]//input | //div[contains(@class,'SearchBox')]//input",
+    "type": "xpath"
+  },
+  {
+    "key": "accountUsernameHeader",
+    "value": "//span[contains(@class,'sf-OldMyAccount')] | //a[@id='myAccount']//span[2] | //div[@id='myAccount']//span | //span[contains(text(),'Hesabım')] | //span[contains(text(),'Erkut')] | //span[contains(text(),'Muhammet')]",
+    "type": "xpath"
+  }
+]

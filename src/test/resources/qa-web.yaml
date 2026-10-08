@@ -1,0 +1,5 @@
+# QA Web environment settings
+baseUrl: "https://www.hepsiburada.com"
+loginUrl: "https://giris.hepsiburada.com"
+timeout: 15
+pageLoadTimeout: 30
