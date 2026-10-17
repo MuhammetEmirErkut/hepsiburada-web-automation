@@ -120,9 +120,7 @@ public class BasePage {
     }
 
     public void switchToLastTab() {
-        try {
-            Thread.sleep(1500);
-        } catch (InterruptedException ignored) {}
+        wait.until(d -> d.getWindowHandles().size() > 1);
         Set<String> handles = driver.getWindowHandles();
         List<String> handleList = new ArrayList<>(handles);
         driver.switchTo().window(handleList.get(handleList.size() - 1));
@@ -140,5 +138,54 @@ public class BasePage {
         try {
             wait.until(d -> js.executeScript("return document.readyState").equals("complete"));
         } catch (Exception ignored) {}
+    }
+
+
+    /**
+     * Dynamically finds the element at the specified grid row and column based on CSS Grid template columns.
+     * 1-based indexing: targetRow >= 1, targetCol >= 1.
+     */
+    public WebElement getElementInGrid(String containerKey, String itemsKey, int targetRow, int targetCol) {
+        List<WebElement> items = findElements(itemsKey);
+        if (items.isEmpty()) {
+            throw new NoSuchElementException("No items found for key: " + itemsKey);
+        }
+
+        WebElement container;
+        try {
+            container = findElement(containerKey);
+        } catch (Exception e) {
+            container = items.get(0).findElement(By.xpath(".."));
+        }
+
+        return getElementInGrid(container, items, targetRow, targetCol);
+    }
+
+    public WebElement getElementInGrid(WebElement container, List<WebElement> items, int targetRow, int targetCol) {
+        if (items == null || items.isEmpty()) {
+            throw new NoSuchElementException("No elements found in grid.");
+        }
+
+        int columnCount = 0;
+        try {
+            String gridCols = (String) js.executeScript(
+                    "return window.getComputedStyle(arguments[0]).gridTemplateColumns;", container);
+            if (gridCols != null && !gridCols.trim().isEmpty() && !gridCols.equalsIgnoreCase("none")) {
+                String[] cols = gridCols.trim().split("\\s+");
+                columnCount = cols.length;
+            }
+        } catch (Exception ignored) {}
+
+        if (columnCount <= 0) {
+            columnCount = 4;
+        }
+
+        int targetIndex = (targetRow - 1) * columnCount + (targetCol - 1);
+        if (targetIndex < 0 || targetIndex >= items.size()) {
+            throw new IndexOutOfBoundsException("Calculated grid index (" + targetIndex
+                    + ") exceeds total available items (" + items.size() + ") with column count: " + columnCount);
+        }
+
+        return items.get(targetIndex);
     }
 }

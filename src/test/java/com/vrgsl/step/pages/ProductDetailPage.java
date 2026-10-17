@@ -11,9 +11,7 @@ public class ProductDetailPage extends BasePage {
     }
 
     public void switchToProductDetailTab() {
-        if (driver.getWindowHandles().size() > 1) {
-            switchToLastTab();
-        }
+        switchToLastTab();
         waitForPageLoad();
         dismissCookiesIfPresent();
     }

@@ -1,12 +1,22 @@
 [
   {
+    "key": "productListContainer",
+    "value": "//ul[contains(@class,'productListContent')]",
+    "type": "xpath"
+  },
+  {
     "key": "productCards",
-    "value": "//li[contains(@id,'i') and contains(@class,'productListContent')] | //li[contains(@class,'search-item')] | //div[@data-test-id='product-card-item']",
+    "value": "//li[contains(@id,'i') and contains(@class,'productListContent')]",
+    "type": "xpath"
+  },
+  {
+    "key": "productCardLink",
+    "value": ".//a[contains(@class,'productCardLink')]",
     "type": "xpath"
   },
   {
     "key": "productTitleInCard",
-    "value": ".//h3 | .//span[@data-test-id='product-card-name'] | .//h2",
+    "value": ".//a[contains(@class,'titleText')]",
     "type": "xpath"
   }
 ]

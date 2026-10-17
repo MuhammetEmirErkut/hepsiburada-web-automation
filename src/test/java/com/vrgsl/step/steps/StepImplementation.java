@@ -80,13 +80,13 @@ public class StepImplementation extends BaseSteps {
         homePage().dismissCookiesIfPresent();
 
         Assertions.assertThat(redirected)
-                .as("Kullanıcı başarılı şekilde login olmalıdır. Mevcut URL: [%s]. Hata: [%s]",
+                .as("User should be logged in successfully. Current URL: [%s]. Error: [%s]",
                         getDriver().getCurrentUrl(),
-                        detectedError.isEmpty() ? "Yok" : detectedError)
+                        detectedError.isEmpty() ? "None" : detectedError)
                 .isTrue();
 
         Assertions.assertThat(homePage().isUserLoggedIn())
-                .as("Kullanıcının giriş yaptığı sayfada doğrulanmalıdır.")
+                .as("User login state should be confirmed on the page.")
                 .isTrue();
     }
 
@@ -99,7 +99,7 @@ public class StepImplementation extends BaseSteps {
     @Step({"Verify search results are displayed", "Arama sonuçlarının görüntülendiğini doğrula"})
     public void verifySearchResults() {
         Assertions.assertThat(searchResultsPage().isResultsListDisplayed())
-                .as("Arama sonuçları kullanıcı girdisine uygun gelmeli ve ürün listesi görünür olmalıdır.")
+                .as("Search results should be displayed and product list should be visible.")
                 .isTrue();
     }
 
@@ -107,10 +107,10 @@ public class StepImplementation extends BaseSteps {
     public void selectSecondRowFirstProduct() {
         String productTitle = searchResultsPage().selectFirstProductInSecondRow();
 
-        // Ürün adını sonraki adımda sepette doğrulamak için Gauge Scenario DataStore'a kaydet
+        // Save product title to Scenario DataStore for cart verification
         StoreHelper.putScenario(SELECTED_PRODUCT_NAME_KEY, productTitle);
 
-        // 2. satır -> 1. ürün sayfasına yönlen (yeni sekmeye geç)
+        // Switch to product detail tab
         productDetailPage().switchToProductDetailTab();
     }
 
@@ -118,7 +118,7 @@ public class StepImplementation extends BaseSteps {
     public void addProductToCart() {
         productDetailPage().clickAddToCart();
         Assertions.assertThat(productDetailPage().isAddedToCartConfirmationVisible())
-                .as("Sepete eklendiğine dair toast / onay mesajı görünür olmalıdır.")
+                .as("Add-to-cart confirmation toast/modal should be visible.")
                 .isTrue();
     }
 
@@ -126,7 +126,7 @@ public class StepImplementation extends BaseSteps {
     public void navigateToCart() {
         productDetailPage().navigateToCartPage();
         Assertions.assertThat(cartPage().isCartPageLoaded())
-                .as("Sepet ekranı başarıyla yüklenmelidir.")
+                .as("Cart page should load successfully.")
                 .isTrue();
     }
 
@@ -135,13 +135,13 @@ public class StepImplementation extends BaseSteps {
         String expectedProductName = StoreHelper.getScenarioString(SELECTED_PRODUCT_NAME_KEY, "");
 
         Assertions.assertThat(expectedProductName)
-                .as("Hafızadaki seçilen ürün adı boş olmamalıdır.")
+                .as("Stored selected product name should not be empty.")
                 .isNotEmpty();
 
         boolean isPresent = cartPage().isProductPresentInCart(expectedProductName);
 
         Assertions.assertThat(isPresent)
-                .as("Eklenen ürünün adı [%s] sepette görünür ve eşleşmiş olmalıdır.", expectedProductName)
+                .as("Added product [%s] should be present in the cart.", expectedProductName)
                 .isTrue();
     }
 }

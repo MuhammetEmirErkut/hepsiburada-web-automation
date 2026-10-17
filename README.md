@@ -1,200 +1,90 @@
 # 🛒 Hepsiburada E-Commerce Test Automation Framework
 
 ![Java 17](https://img.shields.io/badge/Java-17-orange.svg)
-![Gauge Framework](https://img.shields.io/badge/Gauge-1.6.38-blue.svg)
+![Gauge Framework](https://img.shields.io/badge/Gauge-1.6+-blue.svg)
 ![Selenium WebDriver](https://img.shields.io/badge/Selenium-4.18.1-brightgreen.svg)
 ![Maven](https://img.shields.io/badge/Maven-3.9+-red.svg)
 ![Architecture](https://img.shields.io/badge/Architecture-POM%20%2B%20JSON%20Repository-purple.svg)
 
-Bu proje, **Hepsiburada** e-ticaret platformunun uçtan uca (End-to-End) kritik kullanıcı yolculuklarını test etmek amacıyla geliştirilmiş, kurumsal standartlarda **Java**, **Gauge Framework** ve **Page Object Model (POM)** tabanlı bir test otomasyon projesidir.
+Bu proje, **Hepsiburada** e-ticaret platformunda uçtan uca (End-to-End) kritik satın alma akışını otomatize etmek ve doğrulamak amacıyla geliştirilmiş, kurumsal standartlarda **Java 17**, **ThoughtWorks Gauge** ve **Page Object Model (POM)** tabanlı bir test otomasyon framework'üdür.
 
 ---
 
-## 📌 İçindekiler
-- [Proje Özeti](#-proje-özeti)
-- [Mimari ve Tasarım Desenleri](#-mimari-ve-tasarım-desenleri)
-- [Kullanılan Teknolojiler](#-kullanılan-teknolojiler)
-- [Proje Dizin Yapısı](#-proje-dizin-yapısı)
-- [Ön Koşullar ve Kurulum](#-ön-koşullar-ve-kurulum)
-- [Testleri Çalıştırma](#-testleri-çalıştırma)
-- [Test Raporları ve Hata Ekran Görüntüleri](#-test-raporları-ve-hata-ekran-görüntüleri)
-- [Senaryo Detayları (HB-TC01)](#-senaryo-detayları-hb-tc01)
+## 📋 Uçtan Uca Test Akışı (E2E Scenario Flow)
+
+Otomasyon senaryosu (`specs/Scenarios/hepsiburada_shopping.spec`), gerçek bir kullanıcının satın alma yolculuğunu aşağıdaki sıra ile yürütür:
+
+1. **Anasayfa Erişimi:** Hepsiburada ana sayfası açılır, varsa çerez izin bildirimleri kapatılır.
+2. **Kullanıcı Girişi (Login):** Kullanıcı giriş sayfasına yönlendirilir; `value-infos/users.json` içerisindeki tanımlı kullanıcı bilgileriyle oturum açılır ve ana sayfada kullanıcı adının görüntülendiği doğrulanır.
+3. **Ürün Arama:** Arama kutusu tetiklenerek `"bilgisayar"` kelimesi aratılır ve arama sonuç sayfasının yüklendiği doğrulanır.
+4. **Dinamik Ürün Seçimi (2. Satır 1. Ürün):** Arama sonuçları grid listesinden **2. satır 1. ürün** dinamik olarak hesaplanarak seçilir, ürün başlığı hafızaya (`DataStore`) alınır ve yeni sekmede açılan ürün detayına geçilir.
+5. **Sepete Ekleme:** Ürün detay sayfasındaki "Sepete Ekle" butonuna tıklanır ve işlemin başarılı olduğunu belirten onay modalı/toast bildirimi doğrulanır.
+6. **Sepet Doğrulaması:** Sepetim sayfasına gidilir; arama listesinde seçilen ve hafızaya kaydedilen ürün adının sepetteki ürünle birebir eşleştiği `AssertJ` ile doğrulanır.
 
 ---
 
-## 🎯 Proje Özeti
+## 🔍 2. Satır 1. Ürünün Dinamik Seçim Mekanizması
 
-Proje, Hepsiburada web sitesi üzerinde aşağıdaki adımları uçtan uca otomatik olarak yürütür ve doğrular:
-1. **Giriş Yapma:** Güvenli oturum açma (Anti-Bot CDP Stealth desteğiyle).
-2. **Arama:** Belirlenen anahtar kelimeyi (`bilgisayar`) arama ve sonuçları listeleme.
-3. **Ürün Seçimi:** Grid üzerindeki 2. satır 1. ürünü dinamik olarak bularak detay sayfasına geçme.
-4. **Sepete Ekleme:** Ürünü sepete ekleyip onay bildirimini (toast/modal) doğrulama.
-5. **Sepet Doğrulaması:** Sepete giderek eklenen ürün adının sepetteki ürünle birebir eşleştiğini assert etme.
+### Karşılaşılan Problem
+E-ticaret arayüzleri responsive (duyarlı) CSS mimarisine sahiptir. Ekran çözünürlüğüne, pencere boyutuna veya cihaz tipine göre arama listesinde bir satırdaki kolon (ürün) sayısı **3, 4 veya 5** olarak değişkenlik gösterir:
+* **Statik İndeks Kırılganlığı:** Klasik yaklaşımda 4 kolonlu bir ekranda 2. satırın ilk elemanı `products.get(4)` (5. ürün) olarak kodlanır. Ancak tarayıcı penceresi küçüldüğünde satır başına 3 ürün düştüğü senaryoda `products.get(4)` 2. satırın 1. elemanını değil, 2. elemanını seçer; bu durum testin güvenilirliğini bozar.
 
----
+### Uygulanan Mühendislik Çözümü (CSS Grid Template Columns)
+Hepsiburada ürün listesi modern **CSS Grid** (`display: grid`) yapısıyla oluşturulmuştur. Bu doğrultuda çözüm $O(1)$ çalışma zamanı karmaşıklığı ile şu adımlarla tasarlanmıştır:
 
-## 🏗 Mimari ve Tasarım Desenleri
-
-* **Page Object Model (POM):** Her web sayfası (`HomePage`, `LoginPage`, `SearchResultsPage`, `ProductDetailPage`, `CartPage`) bağımsız Java sınıfları olarak modellenmiştir. Sayfa etkileşimleri adım sınıflarından izole edilmiştir.
-* **JSON Element Repository:** Tüm XPath ve CSS seçicileri Java kodundan çıkarılarak `src/test/resources/element-infos/` altındaki JSON kataloglarında toplanmıştır.
-* **Merkezi Değer Deposu (Value-Infos):** E-posta, şifre ve anahtar kelimeler `src/test/resources/value-infos/users.json` içerisinden dinamik olarak çözülür.
-* **ThreadLocal WebDriver:** `DriverManager` ile paralel test koşumuna tam uyumlu, thread-safe bir sürücü altyapısı sağlanmıştır.
-* **Anti-Bot & CDP (Chrome DevTools Protocol) Stealth:** Akamai ve bot algılama sistemlerini aşmak için gerçekçi kullanıcı fare ve klavye etkileşimi (`CdpHelper.java`) ve JavaScript stealth enjeksiyonu uygulanmıştır.
-* **Çoklu Dil (Dual-Language BDD):** Gauge adımları hem **Türkçe** hem **İngilizce** etiketleri (`@Step({"...", "..."})`) destekler.
-
----
-
-## 💻 Kullanılan Teknolojiler
-
-| Bileşen | Teknoloji / Kütüphane | Versiyon | Açıklama |
-|---|---|---|---|
-| **Programlama Dili** | Java (OpenJDK) | 17 LTS | Temel test geliştirme dili |
-| **BDD & Test Runner** | ThoughtWorks Gauge | 0.8.1 / 1.6+ | BDD spesifikasyon ve senaryo motoru |
-| **Tarayıcı Otomasyonu** | Selenium Java | 4.18.1 | Web element etkileşim kütüphanesi |
-| **Sürücü Yöneticisi** | WebDriverManager | 5.7.0 | Otomatik ChromeDriver/GeckoDriver kurulumu |
-| **JSON Ayrıştırıcı** | Google Gson | 2.10.1 | `element-infos` ve `value-infos` JSON okuyucu |
-| **YAML Ayrıştırıcı** | SnakeYAML | 2.7 | `browser-options.yaml` ve `qa-web.yaml` yöneticisi |
-| **Doğrulama (Assertions)** | AssertJ Core | 3.25.3 | Akıcı ve açıklayıcı test assertion kütüphanesi |
-| **Derleme Aracı** | Apache Maven | 3.9+ | Bağımlılık ve proje yaşam döngüsü yöneticisi |
+1. **Grid Kuralının Dinamik Okunması:**
+   Grid kapsayıcısı (`productListContainer`) üzerinden tarayıcının render ettiği hesaplanmış sütun kuralı JavaScript yardımıyla okunur:
+   ```javascript
+   window.getComputedStyle(container).gridTemplateColumns
+   ```
+2. **Kolon Sayısının Belirlenmesi:**
+   Tarayıcının döndürdüğü piksel değerleri (örn. `"230px 230px 230px 230px"` $\rightarrow$ 4 kolon, küçük pencerede `"260px 260px 260px"` $\rightarrow$ 3 kolon) ayrılarak satır başına düşen anlık `columnCount` dinamik olarak tespit edilir.
+3. **Matematiksel İndeksleme:**
+   Grid üzerindeki herhangi bir satır ve sütundaki elemanın indeksi formülle doğrudan bulunur:
+   $$\text{targetIndex} = (\text{targetRow} - 1) \times \text{columnCount} + (\text{targetCol} - 1)$$
+   * 4 kolonlu ekranda: $(2 - 1) \times 4 + (1 - 1) = \mathbf{4}$ (İndeks 4)
+   * 3 kolonlu küçük ekranda: $(2 - 1) \times 3 + (1 - 1) = \mathbf{3}$ (İndeks 3)
+4. **Doğru Bağlantının Tetiklenmesi:**
+   Dış kart çerçevesi yerine kart içerisindeki gerçek yönlendirme bağlantısı (`productCardLink` $\rightarrow$ `<a>`) hedeflenir. Böylece kartın boş alanlarına veya diğer aksiyon butonlarına çarpmadan doğrudan ürün detayının yeni sekmede açılması sağlanır.
+5. **Dinamik Sekme Yönetimi:**
+   `BasePage.switchToLastTab()` metodu, `wait.until(d -> d.getWindowHandles().size() > 1)` explicit wait kuralı ile yeni pencere tanıtıcısı oluşana kadar bekler ve yeni sekmeye pürüzsüz geçiş yapar.
 
 ---
 
-## 📁 Proje Dizin Yapısı
+## 🏗 Mimari Özellikler
 
-```text
-qa-virgosol-hb/
-├── specs/
-│   ├── concepts/
-│   │   └── login.cpt                    # Yeniden kullanılabilir BDD giriş konseptleri
-│   └── hepsiburada_shopping.spec        # HB-TC01 E2E Test Senaryosu (EN & TR)
-├── src/
-│   └── test/
-│       ├── java/
-│       │   └── com/vrgsl/step/
-│       │       ├── driver/
-│       │       │   ├── DriverManager.java       # ThreadLocal WebDriver yaşam döngüsü
-│       │       │   └── DriverHooks.java         # @BeforeScenario / @AfterScenario & Screenshot
-│       │       ├── helper/
-│       │       │   ├── ConfigHelper.java        # YAML konfigürasyon yöneticisi
-│       │       │   ├── ElementHelper.java       # Dinamik JSON element çözücü
-│       │       │   ├── ValueHelper.java         # users.json veri çözücü
-│       │       │   ├── StoreHelper.java         # Gauge DataStore (Hafıza yönetimi)
-│       │       │   └── CdpHelper.java           # Anti-Bot insan benzeri etkileşim
-│       │       ├── model/
-│       │       │   └── ElementInfo.java         # Element JSON veri modeli
-│       │       ├── pages/                       # Page Object Model (POM) sınıfları
-│       │       │   ├── BasePage.java            # Ortak sayfa metotları
-│       │       │   ├── HomePage.java            # Anasayfa ve arama aksiyonları
-│       │       │   ├── LoginPage.java           # Giriş formları
-│       │       │   ├── SearchResultsPage.java   # Sonuç listesi & 2. satır ürün seçimi
-│       │       │   ├── ProductDetailPage.java   # Detay sayfası & sepete ekleme
-│       │       │   └── CartPage.java            # Sepet kontrolleri
-│       │       └── steps/
-│       │           ├── StepImplementation.java  # POM sınıflarını çalıştıran test adımları
-│       │           └── BaseSteps.java           # Çekirdek Gauge adımları
-│       └── resources/
-│           ├── element-infos/                   # JSON Element Depoları
-│           │   ├── home.json
-│           │   ├── login.json
-│           │   ├── search.json
-│           │   ├── product_detail.json
-│           │   └── cart.json
-│           ├── value-infos/                     # Statik Test Verileri
-│           │   └── users.json                   # Kullanıcı e-posta ve şifre tanımları
-│           ├── browser-options.yaml             # Tarayıcı bayrakları ve Stealth JS
-│           └── qa-web.yaml                      # Test ortam URL tanımları
-├── .gitignore
-├── manifest.json
-├── pom.xml
-└── README.md
-```
+* **Page Object Model (POM):** UI etkileşimleri ve iş mantığı `com.vrgsl.step.pages` paketindeki sayfa sınıflarında toplanmıştır.
+* **Merkezi JSON Element Repository:** Tüm element lokatörleri `src/test/resources/element-infos/` altındaki JSON kataloglarında tutulur. Her element tekil, net ve no-fallback (`|` içermeyen) yapıda tanımlanmıştır.
+* **Thread-Safe Sürücü Yönetimi:** `DriverManager.java` sınıfı `ThreadLocal<WebDriver>` mimarisiyle izole bir sürücü yaşam döngüsü sunar.
+* **Senaryolar Arası Veri İletişimi:** Seçilen ürün başlığı Gauge'in `Scenario DataStore` yapısı (`StoreHelper.java`) üzerinde taşınarak adımlar arasında veri sürekliliği sağlanır.
 
 ---
 
-## ⚙️ Ön Koşullar ve Kurulum
+## 🚀 Kurulum ve Çalıştırma
 
-### 1. Sistem Gereksinimleri
-* **Java Development Kit (JDK):** Versiyon 17 veya üzeri
-* **Apache Maven:** Versiyon 3.8+
+### Ön Koşullar
+* **Java:** JDK 17+
+* **Maven:** 3.8+
 * **Google Chrome:** Güncel sürüm
-* **Gauge CLI:** Kurulu olmalıdır.
+* **Gauge CLI:** [Resmi dokümantasyona](https://docs.gauge.org/getting_started/installing-gauge.html) göre kurulu olmalıdır.
 
-### 2. Gauge CLI Kurulumu (Mac / Homebrew)
+### Testleri Koşturma
+
 ```bash
-brew install gauge
-gauge install java
-gauge install html-report
-gauge install screenshot
-```
-
-*(Windows / Linux için: https://docs.gauge.org/getting_started/installing-gauge.html)*
-
-### 3. Bağımlılıkları Yükleme ve Derleme
-Proje kök dizininde terminali açarak aşağıdaki komutu çalıştırın:
-```bash
+# Projeyi derleme
 mvn clean test-compile
-```
 
----
-
-## 🚀 Testleri Çalıştırma
-
-### 🔹 1. Tüm Testleri Çalıştırma
-```bash
+# Test senaryosunu çalıştırma
 gauge run specs
-```
-*veya Maven üzerinden:*
-```bash
+
+# veya Maven üzerinden çalıştırma
 mvn test
 ```
 
-### 🔹 2. Dile Göre Etiketle Çalıştırma (Tags)
-* **Yalnızca İngilizce Senaryo:**
+### Raporlama
+Test tamamlandığında zengin içerikli Gauge HTML raporu otomatik olarak oluşturulur:
+* Rapor konumu: `reports/html-report/index.html`
+* Raporu tarayıcıda açmak için (Mac):
   ```bash
-  gauge run --tags "english" specs
+  open reports/html-report/index.html
   ```
-* **Yalnızca Türkçe Senaryo:**
-  ```bash
-  gauge run --tags "turkish" specs
-  ```
-
-### 🔹 3. Headless (Arayüzsüz) Modda Çalıştırma
-```bash
-mvn test -Dchrome.headless=true
-```
-
----
-
-## 📊 Test Raporları ve Hata Ekran Görüntüleri
-
-Testler tamamlandığında Gauge otomatik olarak zengin içerikli bir HTML rapor üretir:
-
-* **Rapor Yolu:** `reports/html-report/index.html`
-* Tarayıcıda açmak için:
-  ```bash
-  open reports/html-report/index.html   # Mac
-  start reports/html-report/index.html  # Windows
-  ```
-* **Otomatik Screenshot:** Eğer bir adım başarısız olursa `DriverHooks.java` anlık ekran görüntüsü yakalayarak rapora doğrudan ekler.
-
----
-
-## 🧪 Senaryo Detayları (HB-TC01)
-
-```gauge
-# Hepsiburada E-Commerce Test Suite
-
-## HB-TC01 – Login, bilgisayar ara, ikinci satırdaki ilk ürünü sepete ekle ve sepette olduğunu doğrula
-Tags: e2e, shopping_cart, smoke, p1, assignment
-
-* Open Hepsiburada home page
-* Navigate to login page
-* Login as default user
-* Verify that user is successfully logged in
-* Search for product "searchKeyword"
-* Verify search results are displayed
-* Select the first product in the second row and navigate to product details
-* Add product to cart and verify confirmation
-* Navigate to shopping cart page
-* Verify that the selected product is present in the cart
-```

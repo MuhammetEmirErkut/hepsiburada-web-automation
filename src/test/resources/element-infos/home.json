@@ -16,17 +16,17 @@
   },
   {
     "key": "searchBoxContainer",
-    "value": "//div[contains(@class,'searchBoxOld')] | //div[contains(@class,'searchBar')] | //div[contains(@class,'SearchBox')] | //input[@placeholder='Ürün, kategori veya marka ara']",
+    "value": "//div[contains(@class,'initialComponent')]",
     "type": "xpath"
   },
   {
     "key": "searchBoxInput",
-    "value": "//input[contains(@class,'theme-input')] | //input[@placeholder='Ürün, kategori veya marka ara'] | //div[contains(@class,'searchBoxOld')]//input | //div[contains(@class,'SearchBox')]//input",
+    "value": "//input[@data-test-id='search-bar-input']",
     "type": "xpath"
   },
   {
     "key": "accountUsernameHeader",
-    "value": "//span[contains(@class,'sf-OldMyAccount')] | //a[@id='myAccount']//span[2] | //div[@id='myAccount']//span | //span[contains(text(),'Hesabım')] | //span[contains(text(),'Erkut')] | //span[contains(text(),'Muhammet')]",
+    "value": "//div[@id='myAccount']//span[contains(@class,'sf-OldMyAccount')]",
     "type": "xpath"
   }
 ]
