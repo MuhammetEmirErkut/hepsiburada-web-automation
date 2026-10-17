@@ -12,7 +12,7 @@ Bu proje, **Hepsiburada** e-ticaret platformunda uçtan uca (End-to-End) kritik 
 
 ## 📋 Uçtan Uca Test Akışı (E2E Scenario Flow)
 
-Otomasyon senaryosu (`specs/Scenarios/hepsiburada_shopping.spec`), gerçek bir kullanıcının satın alma yolculuğunu aşağıdaki sıra ile yürütür:
+Otomasyon senaryosu (`specs/Scenarios/Shopping/shopping_cart.spec`), gerçek bir kullanıcının satın alma yolculuğunu aşağıdaki sıra ile yürütür:
 
 1. **Anasayfa Erişimi:** Hepsiburada ana sayfası açılır, varsa çerez izin bildirimleri kapatılır.
 2. **Kullanıcı Girişi (Login):** Kullanıcı giriş sayfasına yönlendirilir; `value-infos/users.json` içerisindeki tanımlı kullanıcı bilgileriyle oturum açılır ve ana sayfada kullanıcı adının görüntülendiği doğrulanır.
@@ -54,9 +54,36 @@ Hepsiburada ürün listesi modern **CSS Grid** (`display: grid`) yapısıyla olu
 ## 🏗 Mimari Özellikler
 
 * **Page Object Model (POM):** UI etkileşimleri ve iş mantığı `com.vrgsl.step.pages` paketindeki sayfa sınıflarında toplanmıştır.
-* **Merkezi JSON Element Repository:** Tüm element lokatörleri `src/test/resources/element-infos/` altındaki JSON kataloglarında tutulur. Her element tekil, net ve no-fallback (`|` içermeyen) yapıda tanımlanmıştır.
+* **Merkezi & Modüler JSON Element Repository:** Tüm element lokatörleri `src/test/resources/element-infos/` altında modüler klasörlerde (`Home`, `Login`, `Shopping`) tutulur. Her element tekil, net ve no-fallback (`|` içermeyen) yapıda tanımlanmıştır.
+* **Modüler Spec & Concept Mimarisi:** Test senaryoları ve konseptler domain bazlı klasör yapısında (`specs/Scenarios/Shopping/`, `specs/Concepts/Login/`) organize edilmiştir.
 * **Thread-Safe Sürücü Yönetimi:** `DriverManager.java` sınıfı `ThreadLocal<WebDriver>` mimarisiyle izole bir sürücü yaşam döngüsü sunar.
 * **Senaryolar Arası Veri İletişimi:** Seçilen ürün başlığı Gauge'in `Scenario DataStore` yapısı (`StoreHelper.java`) üzerinde taşınarak adımlar arasında veri sürekliliği sağlanır.
+
+### Dizin Yapısı
+```text
+qa-virgosol-hb/
+├── specs/
+│   ├── Concepts/
+│   │   └── Login/
+│   │       └── login_page.cpt           # Yeniden kullanılabilir oturum açma konseptleri
+│   └── Scenarios/
+│       └── Shopping/
+│           └── shopping_cart.spec       # Uçtan uca ürün arama ve sepet senaryosu
+└── src/test/resources/
+    ├── element-infos/                   # Modüler tekil JSON lokatör katalogları
+    │   ├── Home/
+    │   │   └── home.json
+    │   ├── Login/
+    │   │   └── login.json
+    │   └── Shopping/
+    │       ├── cart.json
+    │       ├── product_detail.json
+    │       └── search.json
+    ├── value-infos/
+    │   └── users.json                   # Test kullanıcı bilgileri ve arama anahtarları
+    ├── browser-options.yaml             # Tarayıcı çalıştırma parametreleri
+    └── qa-web.yaml                      # Ortam URL konfigürasyonları
+```
 
 ---
 

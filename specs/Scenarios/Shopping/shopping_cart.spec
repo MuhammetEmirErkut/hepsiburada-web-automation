@@ -1,7 +1,7 @@
-# Hepsiburada E-Commerce Test Suite
+# Product Search and Add to Cart Suite
 
-## HB-TC001 – Login, search for product, add second row first product to cart and verify in cart
-Tags: e2e, shopping_cart, smoke, p1, assignment, english
+## TC001 – Search product, add to cart and verify in cart
+Tags: shopping_cart, smoke, critical, regression
 * Open Hepsiburada home page
 * Navigate to login page
 * Login as default user
