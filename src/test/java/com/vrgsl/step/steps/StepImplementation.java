@@ -4,7 +4,12 @@ import com.thoughtworks.gauge.Step;
 import com.vrgsl.step.helper.ConfigHelper;
 import com.vrgsl.step.helper.StoreHelper;
 import com.vrgsl.step.helper.ValueHelper;
-import com.vrgsl.step.pages.*;
+import com.vrgsl.step.pages.BasePage;
+import com.vrgsl.step.pages.home.HomePage;
+import com.vrgsl.step.pages.login.LoginPage;
+import com.vrgsl.step.pages.shopping.CartPage;
+import com.vrgsl.step.pages.shopping.ProductDetailPage;
+import com.vrgsl.step.pages.shopping.SearchResultsPage;
 import org.assertj.core.api.Assertions;
 
 public class StepImplementation extends BaseSteps {

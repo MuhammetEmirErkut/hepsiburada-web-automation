@@ -69,6 +69,20 @@ qa-virgosol-hb/
 │   └── Scenarios/
 │       └── Shopping/
 │           └── shopping_cart.spec       # Uçtan uca ürün arama ve sepet senaryosu
+├── src/test/java/com/vrgsl/step/
+│   ├── driver/                          # WebDriver ve Hook sınıfları
+│   ├── helper/                          # Konfigürasyon, element ve veri yardımcıları
+│   ├── pages/                           # Modüler Page Object sınıfları
+│   │   ├── BasePage.java                # Temel sayfa sınıfı ve dinamik Grid mantığı
+│   │   ├── home/
+│   │   │   └── HomePage.java
+│   │   ├── login/
+│   │   │   └── LoginPage.java
+│   │   └── shopping/
+│   │       ├── CartPage.java
+│   │       ├── ProductDetailPage.java
+│   │       └── SearchResultsPage.java
+│   └── steps/                           # Gauge adım implementasyonları
 └── src/test/resources/
     ├── element-infos/                   # Modüler tekil JSON lokatör katalogları
     │   ├── Home/

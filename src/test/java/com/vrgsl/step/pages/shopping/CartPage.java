@@ -1,5 +1,6 @@
-package com.vrgsl.step.pages;
+package com.vrgsl.step.pages.shopping;
 
+import com.vrgsl.step.pages.BasePage;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 

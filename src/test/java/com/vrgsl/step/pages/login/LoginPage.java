@@ -1,5 +1,6 @@
-package com.vrgsl.step.pages;
+package com.vrgsl.step.pages.login;
 
+import com.vrgsl.step.pages.BasePage;
 import com.vrgsl.step.helper.CdpHelper;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
