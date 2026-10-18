@@ -41,10 +41,6 @@ public class LoginPage extends BasePage {
         }
     }
 
-    public void login(String email, String password) {
-        enterEmail(email);
-        enterPassword(password);
-    }
 
     public boolean isRedirectedAwayFromLogin() {
         for (int i = 0; i < 40; i++) {

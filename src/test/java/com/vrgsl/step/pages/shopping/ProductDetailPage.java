@@ -3,7 +3,6 @@ package com.vrgsl.step.pages.shopping;
 import com.vrgsl.step.pages.BasePage;
 import com.vrgsl.step.helper.CdpHelper;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 
 public class ProductDetailPage extends BasePage {
 

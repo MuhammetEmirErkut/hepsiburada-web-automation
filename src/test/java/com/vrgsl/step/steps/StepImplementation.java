@@ -4,7 +4,6 @@ import com.thoughtworks.gauge.Step;
 import com.vrgsl.step.helper.ConfigHelper;
 import com.vrgsl.step.helper.StoreHelper;
 import com.vrgsl.step.helper.ValueHelper;
-import com.vrgsl.step.pages.BasePage;
 import com.vrgsl.step.pages.home.HomePage;
 import com.vrgsl.step.pages.login.LoginPage;
 import com.vrgsl.step.pages.shopping.CartPage;
@@ -43,12 +42,6 @@ public class StepImplementation extends BaseSteps {
         homePage().openHomePage(baseUrl);
     }
 
-    @Step({"Open Hepsiburada home page <urlKey>", "<urlKey> Hepsiburada anasayfasını aç"})
-    public void openHomePage(String urlKey) {
-        String resolvedUrl = ConfigHelper.getString(urlKey, ValueHelper.getValue(urlKey));
-        homePage().openHomePage(resolvedUrl);
-    }
-
     @Step({"Navigate to login page", "Giriş yap sayfasına git"})
     public void navigateToLogin() {
         homePage().navigateToLoginPage();
@@ -64,17 +57,6 @@ public class StepImplementation extends BaseSteps {
     public void enterPassword(String password) {
         String resolvedPassword = ValueHelper.getValue(password);
         loginPage().enterPassword(resolvedPassword);
-    }
-
-    @Step({"Login with username <username> and password <password>", "<username> kullanıcı adı ve <password> şifresi ile giriş yap"})
-    public void login(String username, String password) {
-        enterEmail(username);
-        enterPassword(password);
-    }
-
-    @Step({"Login with default credentials", "Varsayılan kullanıcı ile giriş yap"})
-    public void loginWithDefaultCredentials() {
-        login("defaultUserEmail", "defaultUserPassword");
     }
 
     @Step({"Verify that user is successfully logged in", "Kullanıcının başarılı bir şekilde giriş yaptığını doğrula"})

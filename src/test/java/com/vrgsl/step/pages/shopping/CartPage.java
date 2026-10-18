@@ -13,7 +13,7 @@ public class CartPage extends BasePage {
     }
 
     public boolean isCartPageLoaded() {
-        return isElementVisible("cartContainer", 10) || findElements("cartItemTitles").size() > 0;
+        return isElementVisible("cartContainer", 10) || !findElements("cartItemTitles").isEmpty();
     }
 
     public boolean isProductPresentInCart(String expectedProductName) {

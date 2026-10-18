@@ -12,7 +12,7 @@ public class SearchResultsPage extends BasePage {
     }
 
     public boolean isResultsListDisplayed() {
-        return findElements("productCards").size() > 0;
+        return !findElements("productCards").isEmpty();
     }
 
     /**
